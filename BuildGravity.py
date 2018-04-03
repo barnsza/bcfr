@@ -12,21 +12,35 @@ sources = [
     'https://v.firebog.net/hosts/lists.php?type=tick'
     ]
 
-for source in sources:
-    for url in requests.get(source).text.split('\n'):
-        url = url.split('#')[0].split()
-        if len(url) == 1:
-            print(url[0])
+seen_urls = set()
 
-            for record in requests.get(url[0]).text.split('\n'):
-                record = re.split('[#/]', record)[0].split()
-                if len(record) == 0:
-                    continue
-                elif len(record) == 1:
-                    gravity['{0}.'.format(record[0])] = None
-                else:
-                    gravity['{0}.'.format(record[1])] = None
-        else:
+def process_url(url):
+    if url in seen_urls:
+        return
+    seen_urls.add(url)
+    print(url)
+
+    try:
+        data = requests.get(url).text.split('\n')
+    except:
+        print('Error fetching source')
+        return
+
+    for record in data:
+        record = re.split('#|(?<!:)//', record)[0].split()
+        if len(record) == 0:
             continue
+        elif len(record) == 1:
+            if re.search('https?://', record[0]):
+                process_url(record[0])
+            else:
+                gravity['{0}.'.format(record[0])] = None
+        else:
+            gravity['{0}.'.format(record[1])] = None
+
+for source in sources:
+    process_url(source)
+
+print('Stats: {0} domains, {1} bytes.'.format(gravity.count(), gravity.size()))
 
 gravity.close()

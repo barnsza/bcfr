@@ -10,7 +10,7 @@ gravity.open('gravity.kch', kyotocabinet.DB.OWRITER |
 whitelist = kyotocabinet.DB()
 whitelist.open(':')
 
-source = 'https://raw.githubusercontent.com/barnsza/BlockingCloudFlareResolver/master/sources.txt'
+source = 'https://raw.githubusercontent.com/barnsza/bcfr/master/sources.txt'
 seen_urls = set()
 
 def process_record(record):

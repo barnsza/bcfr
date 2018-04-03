@@ -6,7 +6,7 @@ import dnslib
 import dnslib.server
 import kyotocabinet
 
-class BlockingCloudFlareResolver(dnslib.server.BaseResolver):
+class BCFR(dnslib.server.BaseResolver):
     def __init__(self, gravity_file):
         self.gravity = kyotocabinet.DB()
         self.gravity.open(gravity_file, kyotocabinet.DB.OREADER)
@@ -35,5 +35,5 @@ def shutdown_server(signum, frame):
     sys.exit(0)
 
 signal.signal(signal.SIGINT, shutdown_server)
-server = dnslib.server.DNSServer(BlockingCloudFlareResolver('gravity.kch'))
+server = dnslib.server.DNSServer(BCFR('gravity.kch'))
 server.start()

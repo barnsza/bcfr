@@ -1,0 +1,4 @@
+# BlockingCloudFlareResolver Default Gravity Source
+
+https://raw.githubusercontent.com/pi-hole/pi-hole/master/adlists.default
+https://v.firebog.net/hosts/lists.php?type=tick

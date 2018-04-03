@@ -7,11 +7,7 @@ gravity = kyotocabinet.DB()
 gravity.open('gravity.kch', kyotocabinet.DB.OWRITER |
     kyotocabinet.DB.OCREATE | kyotocabinet.DB.OTRUNCATE)
 
-sources = [
-    'https://raw.githubusercontent.com/pi-hole/pi-hole/master/adlists.default',
-    'https://v.firebog.net/hosts/lists.php?type=tick'
-    ]
-
+source = 'https://raw.githubusercontent.com/barnsza/BlockingCloudFlareResolver/master/sources.txt'
 seen_urls = set()
 
 def process_url(url):
@@ -38,9 +34,7 @@ def process_url(url):
         else:
             gravity['{0}.'.format(record[1])] = None
 
-for source in sources:
-    process_url(source)
-
+process_url(source)
 print('Stats: {0} domains, {1} bytes.'.format(gravity.count(), gravity.size()))
 
 gravity.close()

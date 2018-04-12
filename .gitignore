@@ -100,5 +100,8 @@ ENV/
 # mypy
 .mypy_cache/
 
-# KyotoCabinet File
-*.kch
+# DBM File
+*.dbm
+
+# macOS Files
+.DS_Store

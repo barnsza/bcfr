@@ -4,16 +4,15 @@ import threading
 import requests
 import dnslib
 import dnslib.server
-import kyotocabinet
+import dbm
 
 class BCFR(dnslib.server.BaseResolver):
     def __init__(self, gravity_file):
-        self.gravity = kyotocabinet.DB()
-        self.gravity.open(gravity_file, kyotocabinet.DB.OREADER)
-        super(type(self))
+        self.gravity = dbm.open('gravity.dbm')
+        super().__init__()
 
     def resolve(self, request, handler):
-        if any([self.gravity.check(q.qname) != -1 for q in request.questions]):
+        if any([str(q.qname) in self.gravity for q in request.questions]):
             reply = request.reply()
             reply.header.rcode = dnslib.RCODE.REFUSED
             return reply

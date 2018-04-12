@@ -1,23 +1,20 @@
 import re
 import requests
 import dnslib
-import kyotocabinet
+import dbm
+import os
 
-gravity = kyotocabinet.DB()
-gravity.open('gravity.kch', kyotocabinet.DB.OWRITER |
-    kyotocabinet.DB.OCREATE | kyotocabinet.DB.OTRUNCATE)
-
-whitelist = kyotocabinet.DB()
-whitelist.open(':')
+gravity = dbm.open('gravity.dbm', 'nf')
+whitelist = dict()
 
 source = 'https://raw.githubusercontent.com/barnsza/bcfr/master/sources.txt'
 seen_urls = set()
 
 def process_record(record):
     if record[0] == '!':
-        whitelist['{0}.'.format(record[1:])] = None
+        whitelist['{0}.'.format(record[1:])] = b''
     else:
-        gravity['{0}.'.format(record)] = None
+        gravity['{0}.'.format(record)] = b''
 
 def process_url(url):
     if url in seen_urls:
@@ -44,7 +41,17 @@ def process_url(url):
             process_record(record[1])
 
 process_url(source)
-whitelist.iterate(lambda k, v: gravity.remove(k))
-print('Stats: {0} domains, {1} bytes.'.format(gravity.count(), gravity.size()))
 
+for d in whitelist:
+    try:
+        del gravity[d]
+    except:
+        pass
+
+count = len(gravity)
+gravity.reorganize()
+gravity.sync()
 gravity.close()
+size = os.path.getsize('gravity.dbm')
+
+print('Stats: {0} domains, {1} bytes.'.format(count, size))

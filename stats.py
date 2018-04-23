@@ -20,21 +20,21 @@ for fn in files:
             date, type, client = re.match('(.*) \[DNSHandler:BCFR\] (.*): \[(.*):.*\] \(udp\)', parts[0]).groups()
             host, = re.match('\'(.*)\' .*', parts[1]).groups()
 
+            if type =='Request': continue
+
             date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
             # date = dadate.replace(minute=0, second=0)
             # date = date.replace(second=0)
             date = date - datetime.timedelta(minutes=date.minute % 10, seconds=date.second)
 
-            reply = ''
-            if type == 'Reply':
-                reply = '-' + parts[2].split(':')[0]
+            chart = parts[2].split(':')[0]
+            if chart == 'RRs': chart = 'RR'
 
-            chart = f'{type}{reply}'
             if not chart in charts: charts[chart] = dict()
             if not date in charts[chart]: charts[chart][date] = 0
             charts[chart][date] += 1
 
-bp = bokeh.plotting.figure(title='BCFR Statistics', width=600, height=300, x_axis_type="datetime")
+bp = bokeh.plotting.figure(title='BCFR Statistics', sizing_mode='stretch_both', x_axis_label='Time', y_axis_label='Number of Requests', x_axis_type="datetime")
 
 start_time = min([min(charts[x].keys()) for x in charts.keys()])
 end_time = max([max(charts[x].keys()) for x in charts.keys()])
@@ -54,6 +54,6 @@ for idx, type in enumerate(charts.keys()):
     bp.line(times, values, color=colours[idx], legend=type)
     # break
 
-bp.legend.location = "top_left"
-# bp.legend.orientation = "horizontal"
+# bp.legend.location = "top_left"
+bp.legend.orientation = "horizontal"
 bokeh.plotting.show(bp)

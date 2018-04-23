@@ -28,13 +28,13 @@ for fn in files:
             date = date - datetime.timedelta(minutes=date.minute % 10, seconds=date.second)
 
             chart = parts[2].split(':')[0]
-            if chart == 'RRs': chart = 'RR'
+            # if chart == 'RRs': chart = 'RR'
 
             if not chart in charts: charts[chart] = dict()
             if not date in charts[chart]: charts[chart][date] = 0
             charts[chart][date] += 1
 
-bp = bokeh.plotting.figure(title='BCFR Statistics', sizing_mode='stretch_both', x_axis_label='Time', y_axis_label='Number of Requests', x_axis_type="datetime")
+bp = bokeh.plotting.figure(title='BCFR Statistics', sizing_mode='stretch_both', x_axis_label='Time', y_axis_label='Number of Responses', x_axis_type="datetime", toolbar_location='above', logo=None, tools='pan,box_zoom,reset')
 
 start_time = min([min(charts[x].keys()) for x in charts.keys()])
 end_time = max([max(charts[x].keys()) for x in charts.keys()])

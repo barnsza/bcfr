@@ -1,6 +1,6 @@
 # BlockingCloudFlareResolver Default Gravity Source
 
-https://raw.githubusercontent.com/pi-hole/pi-hole/master/adlists.default
+https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
 https://v.firebog.net/hosts/lists.php?type=tick
 
 # Whitelist Link Shorteners
